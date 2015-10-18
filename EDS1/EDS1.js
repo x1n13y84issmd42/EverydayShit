@@ -836,8 +836,125 @@ var Tsar;
         Render.Shader = Shader;
     })(Render = Tsar.Render || (Tsar.Render = {}));
 })(Tsar || (Tsar = {}));
+var gMath = Math;
+var Tsar;
+(function (Tsar) {
+    var Math;
+    (function (Math) {
+        var Color = (function () {
+            function Color(r, g, b, a) {
+                this.r = r;
+                this.g = g;
+                this.b = b;
+                this.a = a ? a : 1;
+            }
+            Color.prototype.rgb = function () {
+                return "rgb(" + this.r + "," + this.g + "," + this.b + ")";
+            };
+            Color.prototype.rgba = function () {
+                return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
+            };
+            Color.prototype.hsl = function () {
+                var hsl = this.toHSL();
+                return "hsl(" + hsl[0] + "," + hsl[1] + "," + hsl[2] + ")";
+            };
+            Color.prototype.toHSL = function () {
+                var r = this.r / 255;
+                var g = this.g / 255;
+                var b = this.b / 255;
+                var max = gMath.max(r, g, b);
+                var min = gMath.min(r, g, b);
+                var h, s, l = (max + min) / 2;
+                if (max == min) {
+                    h = s = 0;
+                }
+                else {
+                    var d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r:
+                            h = (g - b) / d + (g < b ? 6 : 0);
+                            break;
+                        case g:
+                            h = (b - r) / d + 2;
+                            break;
+                        case b:
+                            h = (r - g) / d + 4;
+                            break;
+                    }
+                    h /= 6;
+                }
+                return [h, s, l];
+            };
+            Color.prototype.setHSL = function (h, s, l) {
+                var r, g, b;
+                if (s == 0) {
+                    r = g = b = l; // achromatic
+                }
+                else {
+                    var hue2rgb = function hue2rgb(p, q, t) {
+                        if (t < 0)
+                            t += 1;
+                        if (t > 1)
+                            t -= 1;
+                        if (t < 1 / 6)
+                            return p + (q - p) * 6 * t;
+                        if (t < 1 / 2)
+                            return q;
+                        if (t < 2 / 3)
+                            return p + (q - p) * (2 / 3 - t) * 6;
+                        return p;
+                    };
+                    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    var p = 2 * l - q;
+                    r = hue2rgb(p, q, h + 1 / 3);
+                    g = hue2rgb(p, q, h);
+                    b = hue2rgb(p, q, h - 1 / 3);
+                }
+                this.r = gMath.round(r * 255);
+                this.g = gMath.round(g * 255);
+                this.b = gMath.round(b * 255);
+            };
+            Object.defineProperty(Color.prototype, "h", {
+                get: function () {
+                    return this.toHSL()[0];
+                },
+                set: function (h) {
+                    var hsl = this.toHSL();
+                    if (h < 1) {
+                        h += gMath.floor(h);
+                        h = 1 + h;
+                    }
+                    if (h > 1) {
+                        h -= gMath.floor(h);
+                    }
+                    this.setHSL(h, hsl[1], hsl[2]);
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(Color.prototype, "s", {
+                get: function () {
+                    return this.toHSL()[1];
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(Color.prototype, "l", {
+                get: function () {
+                    return this.toHSL()[2];
+                },
+                enumerable: true,
+                configurable: true
+            });
+            return Color;
+        })();
+        Math.Color = Color;
+    })(Math = Tsar.Math || (Tsar.Math = {}));
+})(Tsar || (Tsar = {}));
 /// <reference path="../shared/TSAR/src/Tsar/Render/Shader.ts" />
 /// <reference path="../shared/TSAR/src/Tsar/Math/float2.ts" />
+/// <reference path="../shared/TSAR/src/Tsar/Math/Color.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -848,6 +965,8 @@ var DiscoShader = (function (_super) {
     function DiscoShader() {
         _super.apply(this, arguments);
         this.offset = new Tsar.Math.float2(0, 0);
+        this.dtPush = 100;
+        this.dt = 0;
     }
     DiscoShader.prototype.prepare = function (text, pt, depth) {
         this.text = text;
@@ -856,6 +975,12 @@ var DiscoShader = (function (_super) {
     };
     DiscoShader.prototype.setParallaxOffset = function (offset) {
         this.offset = offset;
+    };
+    DiscoShader.prototype.update = function (dt, et) {
+        this.dt += dt;
+        if (this.dt >= this.dtPush) {
+            this.dt = 0;
+        }
     };
     DiscoShader.prototype.render = function (C) {
         var bsize = 72;
@@ -868,18 +993,26 @@ var DiscoShader = (function (_super) {
         C.font = "bold " + size + "px Monoton";
         var textW = C.measureText(this.text).width / 2;
         pt.x -= textW;
-        C.fillStyle = "rgba(64, 128, 255, 0.1)";
+        var c = new Tsar.Math.Color(64, 128, 255, 0.1);
+        var h = c.h;
         for (var i = 0; i < this.depth / 2; i++) {
+            h += 0.1;
+            c.h = h;
+            C.fillStyle = c.rgba();
             C.font = "bold " + size + "px Monoton";
             C.context.fillText(this.text, pt.x, pt.y);
             pt = pt.add(pdvs);
             size += sizeStep;
         }
         pt = (new Tsar.Math.float2(this.pt.x, this.pt.y)).sub(pdvs);
-        //	pt.x -= C.measureText(this.text);
         pt.x -= textW;
         size = bsize - sizeStep;
+        c = new Tsar.Math.Color(64, 128, 255, 0.1);
+        h = c.h;
         for (var i = 0; i < this.depth / 2; i++) {
+            h -= 0.1;
+            c.h = h;
+            C.fillStyle = c.rgba();
             C.font = "bold " + size + "px Monoton";
             C.context.fillText(this.text, pt.x, pt.y);
             pt = pt.sub(pdvs);
@@ -915,6 +1048,7 @@ var EDS1 = (function () {
         rtproxy.mouse.onMove(mouseFn);
     };
     EDS1.prototype.update = function (dt, et, now) {
+        this.disco.update(dt, et);
     };
     EDS1.prototype.render = function () {
         this.RT.context.clearRect(0, 0, this.W, this.H);

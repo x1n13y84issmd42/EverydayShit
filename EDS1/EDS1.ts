@@ -44,7 +44,7 @@ class EDS1 implements Tsar.Core.IApp
 
 	update(dt:number, et:number, now:number)
 	{
-
+		this.disco.update(dt, et);
 	}
 
 	render()
