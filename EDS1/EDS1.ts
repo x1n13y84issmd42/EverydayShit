@@ -39,7 +39,13 @@ class EDS1 implements Tsar.Core.IApp
 			));
 		};
 
+		var clickFn = function(e)
+		{
+			eds1.disco.hit();
+		}
+
 		rtproxy.mouse.onMove(mouseFn);
+		rtproxy.mouse.onClick(clickFn);
 	}
 
 	update(dt:number, et:number, now:number)

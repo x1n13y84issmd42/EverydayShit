@@ -13,6 +13,8 @@ class DiscoShader extends Tsar.Render.Shader
 	private dt = 0;
 	private hue = 1;
 
+	private layers = [];
+
 	prepare(text: string, pt: Tsar.Math.float2, depth?: number)
 	{
 		this.text = text;
@@ -34,8 +36,22 @@ class DiscoShader extends Tsar.Render.Shader
 			this.dt = 0;
 			this.hue -= (1 / this.depth);
 			console.log(this.hue);
-		//	this.layers.push({color:"rgba"})
+			this.addLayer({hit:false, hue:this.hue});
 		}
+	}
+
+	private addLayer(d)
+	{
+		this.layers.unshift(d);
+		if (this.layers.length > this.depth)
+		{
+			this.layers.splice(this.depth);
+		}
+	}
+
+	hit()
+	{
+		this.addLayer({hit:true, hue:this.hue});
 	}
 
 	render(C)
@@ -57,16 +73,31 @@ class DiscoShader extends Tsar.Render.Shader
 		var c = new Tsar.Math.Color(64, 128, 255, 1);
 
 		var h = c.h = this.hue;
-		c.l = 0.01;
+	//	c.l = 0.01;
 		var lStep = 1 / this.depth;
 
-		for (var i=0; i<this.depth; i++)
+		for (var dI in this.layers)
 		{
-			c.h += 0.1;
-			c.l += lStep;
-			C.fillStyle = c.rgba();
-			C.font = "bold " + size + "px Monoton";
-			C.context.fillText(this.text, pt.x, pt.y);
+			var d = this.layers[dI];
+			c.h = d.hue;
+		//	c.l += lStep;
+
+			if (d.hit)
+			{
+				c.a = 1 - (dI / this.depth);
+				C.fillStyle = c.rgba();
+				C.font = "bold " + size * 2 + "px Monoton";
+				var hitW = C.measureText(this.text).width / 2;
+				C.context.fillText(this.text, pt.x - (hitW-textW)/2, pt.y);
+				c.a = 1;
+			}
+			else
+			{
+				C.fillStyle = c.rgba();
+				C.font = "bold " + size + "px Monoton";
+				C.context.fillText(this.text, pt.x, pt.y);
+			}
+
 			pt = pt.add(pdvs);
 			size += sizeStep;
 		}

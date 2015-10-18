@@ -973,6 +973,7 @@ var DiscoShader = (function (_super) {
         this.dtPush = 100;
         this.dt = 0;
         this.hue = 1;
+        this.layers = [];
     }
     DiscoShader.prototype.prepare = function (text, pt, depth) {
         this.text = text;
@@ -988,7 +989,17 @@ var DiscoShader = (function (_super) {
             this.dt = 0;
             this.hue -= (1 / this.depth);
             console.log(this.hue);
+            this.addLayer({ hit: false, hue: this.hue });
         }
+    };
+    DiscoShader.prototype.addLayer = function (d) {
+        this.layers.unshift(d);
+        if (this.layers.length > this.depth) {
+            this.layers.splice(this.depth);
+        }
+    };
+    DiscoShader.prototype.hit = function () {
+        this.addLayer({ hit: true, hue: this.hue });
     };
     DiscoShader.prototype.render = function (C) {
         C.globalCompositeOperation = "lighten";
@@ -1003,14 +1014,25 @@ var DiscoShader = (function (_super) {
         var pt = (new Tsar.Math.float2(this.pt.x - textW, this.pt.y)).sub(pdvs.nmul(this.depth / 2));
         var c = new Tsar.Math.Color(64, 128, 255, 1);
         var h = c.h = this.hue;
-        c.l = 0.01;
+        //	c.l = 0.01;
         var lStep = 1 / this.depth;
-        for (var i = 0; i < this.depth; i++) {
-            c.h += 0.1;
-            c.l += lStep;
-            C.fillStyle = c.rgba();
-            C.font = "bold " + size + "px Monoton";
-            C.context.fillText(this.text, pt.x, pt.y);
+        for (var dI in this.layers) {
+            var d = this.layers[dI];
+            c.h = d.hue;
+            //	c.l += lStep;
+            if (d.hit) {
+                c.a = 1 - (dI / this.depth);
+                C.fillStyle = c.rgba();
+                C.font = "bold " + size * 2 + "px Monoton";
+                var hitW = C.measureText(this.text).width / 2;
+                C.context.fillText(this.text, pt.x - (hitW - textW) / 2, pt.y);
+                c.a = 1;
+            }
+            else {
+                C.fillStyle = c.rgba();
+                C.font = "bold " + size + "px Monoton";
+                C.context.fillText(this.text, pt.x, pt.y);
+            }
             pt = pt.add(pdvs);
             size += sizeStep;
         }
@@ -1041,7 +1063,11 @@ var EDS1 = (function () {
         var mouseFn = function (e) {
             eds1.disco.setParallaxOffset(new TMath.float2(Math.floor(e.x) - (eds1.W / 2), Math.floor(e.y) - (eds1.H / 2)));
         };
+        var clickFn = function (e) {
+            eds1.disco.hit();
+        };
         rtproxy.mouse.onMove(mouseFn);
+        rtproxy.mouse.onClick(clickFn);
     };
     EDS1.prototype.update = function (dt, et, now) {
         this.disco.update(dt, et);
