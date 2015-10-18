@@ -847,6 +847,7 @@ var DiscoShader = (function (_super) {
     __extends(DiscoShader, _super);
     function DiscoShader() {
         _super.apply(this, arguments);
+        this.offset = new Tsar.Math.float2(0, 0);
     }
     DiscoShader.prototype.prepare = function (text, pt, depth) {
         this.text = text;
@@ -858,18 +859,31 @@ var DiscoShader = (function (_super) {
     };
     DiscoShader.prototype.render = function (C) {
         var bsize = 72;
-        var msize = 100;
+        var msize = 150;
         var sizeStep = (msize - bsize) / (this.depth / 2);
-        var size = bsize - (sizeStep * (this.depth / 2));
-        var pdv = new Tsar.Math.float2(200, 200);
+        var size = bsize; // - (sizeStep * (this.depth / 2));
+        var pdv = new Tsar.Math.float2(-this.offset.x, -this.offset.y);
         var pdvs = pdv.ndiv(this.depth);
-        var pt = this.pt.sub(pdv.ndiv(2));
+        var pt = new Tsar.Math.float2(this.pt.x, this.pt.y);
+        C.font = "bold " + size + "px Monoton";
+        var textW = C.measureText(this.text).width / 2;
+        pt.x -= textW;
         C.fillStyle = "rgba(64, 128, 255, 0.1)";
-        for (var i = 0; i < this.depth; i++) {
+        for (var i = 0; i < this.depth / 2; i++) {
             C.font = "bold " + size + "px Monoton";
-            C.context.fillText(this.text, this.pt.x, this.pt.y);
+            C.context.fillText(this.text, pt.x, pt.y);
             pt = pt.add(pdvs);
             size += sizeStep;
+        }
+        pt = (new Tsar.Math.float2(this.pt.x, this.pt.y)).sub(pdvs);
+        //	pt.x -= C.measureText(this.text);
+        pt.x -= textW;
+        size = bsize - sizeStep;
+        for (var i = 0; i < this.depth / 2; i++) {
+            C.font = "bold " + size + "px Monoton";
+            C.context.fillText(this.text, pt.x, pt.y);
+            pt = pt.sub(pdvs);
+            size -= sizeStep;
         }
     };
     return DiscoShader;
@@ -889,18 +903,22 @@ var EDS1 = (function () {
     function EDS1() {
     }
     EDS1.prototype.ready = function () {
-        console.log("EDS1 is up");
+        var eds1 = this;
         var W = this.W = Tsar.UI.window.width();
         var H = this.H = Tsar.UI.window.height();
         this.disco = new DiscoShader();
         this.RT = new Tsar.Render.Target(this.W, this.H);
-        Tsar.UI.exposeRenderTarget(this.RT);
+        var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
+        var mouseFn = function (e) {
+            eds1.disco.setParallaxOffset(new TMath.float2(Math.floor(e.x) - (eds1.W / 2), Math.floor(e.y) - (eds1.H / 2)));
+        };
+        rtproxy.mouse.onMove(mouseFn);
     };
     EDS1.prototype.update = function (dt, et, now) {
     };
     EDS1.prototype.render = function () {
         this.RT.context.clearRect(0, 0, this.W, this.H);
-        this.disco.prepare("EDS#1", new TMath.float2(this.W / 2, this.H / 2), 24);
+        this.disco.prepare("S  H  I  T", new TMath.float2(this.W / 2, this.H / 2), 24);
         this.disco.render(this.RT.context);
     };
     return EDS1;

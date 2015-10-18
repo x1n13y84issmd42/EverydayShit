@@ -22,14 +22,24 @@ class EDS1 implements Tsar.Core.IApp
 
 	ready()
 	{
-		console.log("EDS1 is up");
+		var eds1 = this;
 
 		var W = this.W = Tsar.UI.window.width();
 		var H = this.H = Tsar.UI.window.height();
 
 		this.disco = new DiscoShader();
 		this.RT = new Tsar.Render.Target(this.W, this.H);
-		Tsar.UI.exposeRenderTarget(this.RT);
+		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
+
+		var mouseFn = function(e){
+			eds1.disco.setParallaxOffset(
+				new TMath.float2(
+					Math.floor(e.x) - (eds1.W/2),
+					Math.floor(e.y) - (eds1.H/2)
+			));
+		};
+
+		rtproxy.mouse.onMove(mouseFn);
 	}
 
 	update(dt:number, et:number, now:number)
@@ -40,7 +50,7 @@ class EDS1 implements Tsar.Core.IApp
 	render()
 	{
 		this.RT.context.clearRect(0, 0, this.W, this.H);
-		this.disco.prepare("EDS#1", new TMath.float2(this.W/2, this.H/2), 24);
+		this.disco.prepare("S  H  I  T", new TMath.float2(this.W/2, this.H/2), 24);
 		this.disco.render(this.RT.context);
 	}
 }
