@@ -1,0 +1,1 @@
+tsc --watch --target ES5 --out %1/%1.js %1/%1.ts

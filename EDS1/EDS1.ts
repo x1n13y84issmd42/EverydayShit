@@ -1,0 +1,52 @@
+/// <reference path='../shared/TSAR/src/Tsar/Power.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/Core/IApp.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/Render/Main.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/UI/Window.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/UI/Main.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/Flow/RAF.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/DOM/Main.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/Render/Debug.ts' />
+
+/// <reference path='DiscoShader.ts' />
+
+import DD = Tsar.Render.Debug;
+import TMath = Tsar.Math;
+
+class EDS1 implements Tsar.Core.IApp
+{
+	private RT: Tsar.Render.Target;
+	private disco: DiscoShader;
+
+	private W: number;
+	private H: number;
+
+	ready()
+	{
+		console.log("EDS1 is up");
+
+		var W = this.W = Tsar.UI.window.width();
+		var H = this.H = Tsar.UI.window.height();
+
+		this.disco = new DiscoShader();
+		this.RT = new Tsar.Render.Target(this.W, this.H);
+		Tsar.UI.exposeRenderTarget(this.RT);
+	}
+
+	update(dt:number, et:number, now:number)
+	{
+
+	}
+
+	render()
+	{
+		this.RT.context.clearRect(0, 0, this.W, this.H);
+		this.disco.prepare("EDS#1", new TMath.float2(this.W/2, this.H/2), 24);
+		this.disco.render(this.RT.context);
+	}
+}
+
+var flow = new Tsar.Flow.RAF();
+var power = new Tsar.Power();
+Tsar.DOM.root(document.getElementById('tsar'));
+power.ride(flow);
+power.empower(new EDS1());

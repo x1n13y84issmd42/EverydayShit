@@ -1,0 +1,60 @@
+html, body{
+	position: relative;
+	padding: 0;
+	margin: 0;
+	/*background-color: rgba(39, 60, 136, 1);*/
+	/* background-color: rgba(42, 162, 255, 1); */
+	/* background-color: #110a2a; */
+	background-color: #374D5C; 
+	overflow: hidden;
+}
+
+canvas,
+{
+	position: relative;
+	display: block;
+	background: transparent;
+}
+
+#controls
+{
+	color: white;
+}
+
+.hud
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 12pt;
+}
+
+.hud .label
+{
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 32pt;
+	color: white;
+	display: block;
+	margin: 0 4pt 8pt 0;
+	text-shadow:
+		1px 1px 1px rgba(0, 0, 0, 0.4),
+		2px 2px 1px rgba(0, 0, 0, 0.38),
+		3px 3px 1px rgba(0, 0, 0, 0.36),
+		4px 4px 1px rgba(0, 0, 0, 0.34),
+		5px 5px 1px rgba(0, 0, 0, 0.32),
+		6px 6px 1px rgba(0, 0, 0, 0.30),
+		7px 7px 1px rgba(0, 0, 0, 0.28),
+		8px 8px 1px rgba(0, 0, 0, 0.26),
+		9px 9px 1px rgba(0, 0, 0, 0.24),
+		10px 10px 1px rgba(0, 0, 0, 0.22),
+		11px 11px 1px rgba(0, 0, 0, 0.2),
+		12px 12px 1px rgba(0, 0, 0, 0.18),
+		13px 13px 1px rgba(0, 0, 0, 0.16),
+		14px 14px 1px rgba(0, 0, 0, 0.14),
+		15px 15px 1px rgba(0, 0, 0, 0.12),
+		16px 16px 1px rgba(0, 0, 0, 0.10),
+		17px 17px 1px rgba(0, 0, 0, 0.08),
+		18px 18px 1px rgba(0, 0, 0, 0.06),
+		19px 19px 1px rgba(0, 0, 0, 0.04),
+		20px 20px 1px rgba(0, 0, 0, 0.02);
+}
