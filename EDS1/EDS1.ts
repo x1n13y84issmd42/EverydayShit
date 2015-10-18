@@ -49,7 +49,15 @@ class EDS1 implements Tsar.Core.IApp
 
 	render()
 	{
-		this.RT.context.clearRect(0, 0, this.W, this.H);
+		this.RT.context.globalCompositeOperation = "source-over";
+
+		this.RT.context.beginPath();
+		this.RT.context.rect(0, 0, this.W, this.H);
+		this.RT.context.closePath();
+		this.RT.context.fillStyle = "#374D5C";
+		this.RT.context.fill();
+	//	this.RT.context.clearRect(0, 0, this.W, this.H);
+	
 		this.disco.prepare("S  H  I  T", new TMath.float2(this.W/2, this.H/2), 24);
 		this.disco.render(this.RT.context);
 	}

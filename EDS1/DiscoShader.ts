@@ -11,6 +11,7 @@ class DiscoShader extends Tsar.Render.Shader
 
 	private dtPush = 100;
 	private dt = 0;
+	private hue = 1;
 
 	prepare(text: string, pt: Tsar.Math.float2, depth?: number)
 	{
@@ -31,55 +32,43 @@ class DiscoShader extends Tsar.Render.Shader
 		if (this.dt >= this.dtPush)
 		{
 			this.dt = 0;
+			this.hue -= (1 / this.depth);
+			console.log(this.hue);
 		//	this.layers.push({color:"rgba"})
 		}
 	}
 
 	render(C)
 	{
-		var bsize = 72;
-		var msize = 150;
+		C.globalCompositeOperation = "lighten";
+
+		var bsize = 96;
+		var msize = 160;
 		var sizeStep = (msize - bsize) / (this.depth / 2);
-		var size = bsize;// - (sizeStep * (this.depth / 2));
+		var size = bsize - (sizeStep * (this.depth / 2));
 
 		var pdv = new Tsar.Math.float2(-this.offset.x, -this.offset.y);
 		var pdvs = pdv.ndiv(this.depth);
-		var pt = new Tsar.Math.float2(this.pt.x, this.pt.y);
 		
 		C.font = "bold " + size + "px Monoton";
 		var textW = C.measureText(this.text).width / 2;
-		pt.x -= textW;
+		var pt = (new Tsar.Math.float2(this.pt.x - textW, this.pt.y)).sub(pdvs.nmul(this.depth/2));
 
-		var c = new Tsar.Math.Color(64, 128, 255, 0.1);
+		var c = new Tsar.Math.Color(64, 128, 255, 1);
 
-		var h = c.h;
+		var h = c.h = this.hue;
+		c.l = 0.01;
+		var lStep = 1 / this.depth;
 
-		for (var i=0; i<this.depth/2; i++)
+		for (var i=0; i<this.depth; i++)
 		{
-			h += 0.1;
-			c.h = h;
+			c.h += 0.1;
+			c.l += lStep;
 			C.fillStyle = c.rgba();
 			C.font = "bold " + size + "px Monoton";
 			C.context.fillText(this.text, pt.x, pt.y);
 			pt = pt.add(pdvs);
 			size += sizeStep;
-		}
-
-		pt = (new Tsar.Math.float2(this.pt.x, this.pt.y)).sub(pdvs);
-		pt.x -= textW;
-		size = bsize - sizeStep;
-		c = new Tsar.Math.Color(64, 128, 255, 0.1);
-		h = c.h;
-
-		for (var i=0; i<this.depth/2; i++)
-		{
-			h -= 0.1;
-			c.h = h;
-			C.fillStyle = c.rgba();
-			C.font = "bold " + size + "px Monoton";
-			C.context.fillText(this.text, pt.x, pt.y);
-			pt = pt.sub(pdvs);
-			size -= sizeStep;
 		}
 	}
 }

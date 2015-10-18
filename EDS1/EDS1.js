@@ -922,7 +922,7 @@ var Tsar;
                 set: function (h) {
                     var hsl = this.toHSL();
                     if (h < 1) {
-                        h += gMath.floor(h);
+                        h -= gMath.ceil(h);
                         h = 1 + h;
                     }
                     if (h > 1) {
@@ -943,6 +943,11 @@ var Tsar;
             Object.defineProperty(Color.prototype, "l", {
                 get: function () {
                     return this.toHSL()[2];
+                },
+                set: function (l) {
+                    var hsl = this.toHSL();
+                    l = gMath.max(0, gMath.min(1, l));
+                    this.setHSL(hsl[0], hsl[1], l);
                 },
                 enumerable: true,
                 configurable: true
@@ -967,6 +972,7 @@ var DiscoShader = (function (_super) {
         this.offset = new Tsar.Math.float2(0, 0);
         this.dtPush = 100;
         this.dt = 0;
+        this.hue = 1;
     }
     DiscoShader.prototype.prepare = function (text, pt, depth) {
         this.text = text;
@@ -980,43 +986,33 @@ var DiscoShader = (function (_super) {
         this.dt += dt;
         if (this.dt >= this.dtPush) {
             this.dt = 0;
+            this.hue -= (1 / this.depth);
+            console.log(this.hue);
         }
     };
     DiscoShader.prototype.render = function (C) {
-        var bsize = 72;
-        var msize = 150;
+        C.globalCompositeOperation = "lighten";
+        var bsize = 96;
+        var msize = 160;
         var sizeStep = (msize - bsize) / (this.depth / 2);
-        var size = bsize; // - (sizeStep * (this.depth / 2));
+        var size = bsize - (sizeStep * (this.depth / 2));
         var pdv = new Tsar.Math.float2(-this.offset.x, -this.offset.y);
         var pdvs = pdv.ndiv(this.depth);
-        var pt = new Tsar.Math.float2(this.pt.x, this.pt.y);
         C.font = "bold " + size + "px Monoton";
         var textW = C.measureText(this.text).width / 2;
-        pt.x -= textW;
-        var c = new Tsar.Math.Color(64, 128, 255, 0.1);
-        var h = c.h;
-        for (var i = 0; i < this.depth / 2; i++) {
-            h += 0.1;
-            c.h = h;
+        var pt = (new Tsar.Math.float2(this.pt.x - textW, this.pt.y)).sub(pdvs.nmul(this.depth / 2));
+        var c = new Tsar.Math.Color(64, 128, 255, 1);
+        var h = c.h = this.hue;
+        c.l = 0.01;
+        var lStep = 1 / this.depth;
+        for (var i = 0; i < this.depth; i++) {
+            c.h += 0.1;
+            c.l += lStep;
             C.fillStyle = c.rgba();
             C.font = "bold " + size + "px Monoton";
             C.context.fillText(this.text, pt.x, pt.y);
             pt = pt.add(pdvs);
             size += sizeStep;
-        }
-        pt = (new Tsar.Math.float2(this.pt.x, this.pt.y)).sub(pdvs);
-        pt.x -= textW;
-        size = bsize - sizeStep;
-        c = new Tsar.Math.Color(64, 128, 255, 0.1);
-        h = c.h;
-        for (var i = 0; i < this.depth / 2; i++) {
-            h -= 0.1;
-            c.h = h;
-            C.fillStyle = c.rgba();
-            C.font = "bold " + size + "px Monoton";
-            C.context.fillText(this.text, pt.x, pt.y);
-            pt = pt.sub(pdvs);
-            size -= sizeStep;
         }
     };
     return DiscoShader;
@@ -1051,7 +1047,13 @@ var EDS1 = (function () {
         this.disco.update(dt, et);
     };
     EDS1.prototype.render = function () {
-        this.RT.context.clearRect(0, 0, this.W, this.H);
+        this.RT.context.globalCompositeOperation = "source-over";
+        this.RT.context.beginPath();
+        this.RT.context.rect(0, 0, this.W, this.H);
+        this.RT.context.closePath();
+        this.RT.context.fillStyle = "#374D5C";
+        this.RT.context.fill();
+        //	this.RT.context.clearRect(0, 0, this.W, this.H);
         this.disco.prepare("S  H  I  T", new TMath.float2(this.W / 2, this.H / 2), 24);
         this.disco.render(this.RT.context);
     };
