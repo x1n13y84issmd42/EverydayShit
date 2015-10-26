@@ -39,6 +39,7 @@ class BlockyShitShader extends Tsar.Render.Shader
 		var pt = new Tsar.Math.float2(origin.x, origin.y);
 		var aspect = this.W / this.H;
 
+		C.strokeStyle = "rgb(12, 25, 50)";
 		C.beginPath();
 
 		for(var frI in this.field)
@@ -69,8 +70,6 @@ class BlockyShitShader extends Tsar.Render.Shader
 		var fZ = bZ - this.blockDepth;
 		var aspect = this.W / this.H;
 		var amplitude = 100;
-	//	bZ += amplitude * Math.sin(this.et / 200);
-	//	fZ += amplitude * Math.sin(this.et / 200);
 
 		var btl = new Tsar.Math.float3(pt.x, pt.y, bZ);
 		var btr = new Tsar.Math.float3(pt.x + this.blockWidth, pt.y, bZ);
@@ -101,7 +100,6 @@ class BlockyShitShader extends Tsar.Render.Shader
 		var fbl2 = Tsar.Math.perspectiveProjection(fbl, this.W, this.H, 0);
 		var fbr2 = Tsar.Math.perspectiveProjection(fbr, this.W, this.H, 0);
 
-		C.strokeStyle = "white";
 		C.moveTo(btl2.x, btl2.y);
 		C.lineTo(btr2.x, btr2.y);
 		C.lineTo(bbr2.x, bbr2.y);

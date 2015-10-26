@@ -44,6 +44,12 @@ class EDS2 implements Tsar.Core.IApp
 		};
 
 		rtproxy.mouse.onMove(mouseFn);
+
+		this.RT.context.beginPath();
+		this.RT.context.rect(0, 0, this.W, this.H);
+		this.RT.context.closePath();
+		this.RT.context.fillStyle = "white";
+		this.RT.context.fill();
 	}
 
 	update(dt:number, et:number, now:number)
@@ -58,7 +64,7 @@ class EDS2 implements Tsar.Core.IApp
 		this.RT.context.beginPath();
 		this.RT.context.rect(0, 0, this.W, this.H);
 		this.RT.context.closePath();
-		this.RT.context.fillStyle = "black";
+		this.RT.context.fillStyle = "rgba(255, 255, 255, 0.1)";
 		this.RT.context.fill();
 	
 		this.shader.render(this.RT.context);
