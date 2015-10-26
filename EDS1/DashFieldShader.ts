@@ -48,7 +48,7 @@ class DashFieldShader extends Tsar.Render.Shader
 		{
 			this.lightZIndex--;
 
-			if (this.lightZIndex <= 0)
+			if (this.lightZIndex < 0)
 			{
 				this.lightZIndex = this.nZ - 1;
 			}
