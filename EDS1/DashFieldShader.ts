@@ -15,7 +15,7 @@ class DashFieldShader extends Tsar.Render.Shader
 
 	private lightZIndex: number = 0;
 	private et: number = 0;
-	private dtLight: number = 150;
+	private dtLight: number = 100;
 
 	constructor(nX: number, nZ: number, sX: number, sZ: number, dashLength: number)
 	{
@@ -28,7 +28,9 @@ class DashFieldShader extends Tsar.Render.Shader
 		this.nZ = nZ;
 		this.sX = sX;
 		this.sZ = sZ;
-		this.dashLength = dashLength;;
+		this.dashLength = dashLength;
+
+		this.lightZIndex = this.nZ - 1;
 	}
 
 	setParallaxOffset(offset: Tsar.Math.float2)
@@ -44,11 +46,11 @@ class DashFieldShader extends Tsar.Render.Shader
 
 		if (this.et >= this.dtLight)
 		{
-			this.lightZIndex++;
+			this.lightZIndex--;
 
-			if (this.lightZIndex >= this.nZ)
+			if (this.lightZIndex <= 0)
 			{
-				this.lightZIndex = 0;
+				this.lightZIndex = this.nZ - 1;
 			}
 
 			this.et = 0;
@@ -57,11 +59,14 @@ class DashFieldShader extends Tsar.Render.Shader
 
 	render(C)
 	{
+		var color = "rgb(127, 50, 255)";
+
 		var lX = this.nX;
 		var lZ = this.nZ;
 		var sX = this.sX;
 		var sZ = this.sZ;
 		var xO = this.W / 2 - (lX * sX / 2);
+		var zDepth = lZ * sZ;
 
 		var origin = new Tsar.Math.float3(xO - this.offset.x, 600 - this.offset.y, 300);
 		var end = new Tsar.Math.float3(xO + this.offset.x, 600 + this.offset.y, lZ * (this.dashLength + sZ));
@@ -83,16 +88,24 @@ class DashFieldShader extends Tsar.Render.Shader
 
 			C.closePath();
 
+			var lZI = 1 - (i * sZ) / zDepth;;
+
 			if (i == this.lightZIndex)
 			{
-				C.strokeStyle = "rgb(255, 127, 0)";
-				C.lineWidth = 4;
+				C.strokeStyle = color;
+				C.lineWidth = 8 * lZI;
+				C.lineCap = "round";
+				C.stroke();
+
+				C.strokeStyle = "rgb(255, 255, 255)";
+				C.lineWidth = 2 * lZI;
+				C.lineCap = "round";
 				C.stroke();
 			}
 			else
 			{
-				C.strokeStyle = "rgb(255, 127, 0)";
-				C.lineWidth = 1;
+				C.strokeStyle = color;
+				C.lineWidth = 1 * lZI;
 				C.stroke();
 			}
 
