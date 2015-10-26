@@ -36,6 +36,7 @@ class BlockyShitShader extends Tsar.Render.Shader
 	{
 		var origin = new Tsar.Math.float2(this.W / 2, this.H / 6);
 		origin.x -= this.field[0].length * this.blockWidth / 2;
+		origin.y -= this.field.length * this.blockWidth / 2;
 		var pt = new Tsar.Math.float2(origin.x, origin.y);
 		var aspect = this.W / this.H;
 
