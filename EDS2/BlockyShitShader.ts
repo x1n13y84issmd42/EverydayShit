@@ -17,6 +17,8 @@ class BlockyShitShader extends Tsar.Render.Shader
 	private blockWidth: number = 100;
 	private blockDepth: number = 400;
 
+	private et: number = 0;
+
 	constructor()
 	{
 		super();
@@ -27,7 +29,7 @@ class BlockyShitShader extends Tsar.Render.Shader
 
 	update(dt: number)
 	{
-
+		this.et += dt;
 	}
 
 	render(C)
@@ -66,6 +68,9 @@ class BlockyShitShader extends Tsar.Render.Shader
 		var bZ = 1500;
 		var fZ = bZ - this.blockDepth;
 		var aspect = this.W / this.H;
+		var amplitude = 100;
+	//	bZ += amplitude * Math.sin(this.et / 200);
+	//	fZ += amplitude * Math.sin(this.et / 200);
 
 		var btl = new Tsar.Math.float3(pt.x, pt.y, bZ);
 		var btr = new Tsar.Math.float3(pt.x + this.blockWidth, pt.y, bZ);
@@ -76,6 +81,15 @@ class BlockyShitShader extends Tsar.Render.Shader
 		var ftr = new Tsar.Math.float3(pt.x + this.blockWidth, pt.y, fZ);
 		var fbl = new Tsar.Math.float3(pt.x, pt.y + this.blockWidth * aspect, fZ);
 		var fbr = new Tsar.Math.float3(pt.x + this.blockWidth, pt.y + this.blockWidth * aspect, fZ);
+
+		btl.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		btr.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		bbl.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		bbr.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		ftl.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		ftr.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		fbl.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
+		fbr.z += amplitude * Math.sin((this.et + btl.x + btl.y) / 500);
 
 		var btl2 = Tsar.Math.perspectiveProjection(btl, this.W, this.H, 0);
 		var btr2 = Tsar.Math.perspectiveProjection(btr, this.W, this.H, 0);
