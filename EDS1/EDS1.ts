@@ -9,7 +9,7 @@
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
 /// <reference path='PowerShitShader.ts' />
-/// <reference path='ParallaxLineShader.ts' />
+/// <reference path='DashFieldShader.ts' />
 
 import DD = Tsar.Render.Debug;
 import TMath = Tsar.Math;
@@ -18,7 +18,7 @@ class EDS1 implements Tsar.Core.IApp
 {
 	private RT: Tsar.Render.Target;
 	private shader: PowerShitShader;
-	private lines: ParallaxLineShader;
+	private lines: DashFieldShader;
 
 	private W: number;
 	private H: number;
@@ -46,12 +46,18 @@ class EDS1 implements Tsar.Core.IApp
 		var H = this.H = Tsar.UI.window.height();
 
 		this.shader = new PowerShitShader();
-		this.lines = new ParallaxLineShader();
+		this.lines = new DashFieldShader(80, 20, 60, 60, 20);
 		this.RT = new Tsar.Render.Target(this.W, this.H);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
 
 		var mouseFn = function(e){
 			eds1.shader.setParallaxOffset(
+				new TMath.float2(
+					Math.floor(e.x) - (eds1.W/2),
+					Math.floor(e.y) - (eds1.H/2)
+			));
+
+			eds1.lines.setParallaxOffset(
 				new TMath.float2(
 					Math.floor(e.x) - (eds1.W/2),
 					Math.floor(e.y) - (eds1.H/2)
@@ -70,6 +76,7 @@ class EDS1 implements Tsar.Core.IApp
 	update(dt:number, et:number, now:number)
 	{
 		this.shader.update(dt, et);
+		this.lines.update(dt);
 	}
 
 	render()
