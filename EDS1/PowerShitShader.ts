@@ -79,7 +79,7 @@ class PowerShitShader extends Tsar.Render.Shader
 		var pdv = new Tsar.Math.float2(-this.offset.x / 3, -this.offset.y / 3);
 		var pdvs = pdv.ndiv(this.depth);
 		
-		C.font = "bold " + size + "px Monoton";
+		C.font = "bold " + size + "px Codystar";
 		var pt = (new Tsar.Math.float2(this.pt.x, this.pt.y)).sub(pdvs.nmul(this.depth/2));
 
 		for (var dI in this.layers)
@@ -89,7 +89,7 @@ class PowerShitShader extends Tsar.Render.Shader
 			c.l = d.lightness;
 
 			C.fillStyle = c.rgba();
-			C.font = "bold " + (size * 2) + "px Monoton";
+			C.font = "bold " + (size * 2) + "px Codystar";
 			var tW = C.measureText(this.text).width / 2;
 			C.context.fillText(this.text, pt.x - (tW), pt.y + this.p * 100);
 
