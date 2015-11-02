@@ -46,7 +46,7 @@ class EDS1 implements Tsar.Core.IApp
 		var H = this.H = Tsar.UI.window.height();
 
 		this.shader = new PowerShitShader();
-		this.lines = new DashFieldShader(80, 20, 60, 60, 20);
+		this.lines = new DashFieldShader(80, 20, 100, 40, 60);
 		this.RT = new Tsar.Render.Target(this.W, this.H);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
 
