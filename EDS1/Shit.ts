@@ -6,6 +6,7 @@
 /// <reference path='../shared/TSAR/src/Tsar/Flow/RAF.ts' />
 /// <reference path='../shared/TSAR/src/Tsar/DOM/Main.ts' />
 /// <reference path='../shared/TSAR/src/Tsar/Render/Debug.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/Render/Plotter.ts' />
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
 /// <reference path='PowerShitShader.ts' />
@@ -22,6 +23,8 @@ class Shit implements Tsar.Core.IApp
 
 	private W: number;
 	private H: number;
+
+	private plotter = new Tsar.Render.Debug.Plotter(100);
 
 	proj()
 	{
@@ -69,6 +72,11 @@ class Shit implements Tsar.Core.IApp
 			shit.shader.hit();
 		}
 
+		var motionFn = function(e)
+		{
+
+		}
+
 		rtproxy.mouse.onMove(mouseFn);
 		rtproxy.mouse.onClick(clickFn);
 	}
@@ -77,6 +85,8 @@ class Shit implements Tsar.Core.IApp
 	{
 		this.shader.update(dt, et);
 		this.lines.update(dt);
+
+		this.plotter.addValue('random', gMath.random() * 100);
 	}
 
 	render()
@@ -93,7 +103,10 @@ class Shit implements Tsar.Core.IApp
 		this.shader.prepare("S  H  I  T", new TMath.float2(this.W/2, this.H/2), 24);
 		this.shader.render(this.RT.context);
 
-		this.lines.render(this.RT.context);
+	//	this.lines.render(this.RT.context);
+		
+		this.plotter.render(this.RT.context);
+
 	}
 }
 
