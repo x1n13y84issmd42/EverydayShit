@@ -24,8 +24,16 @@ class EDS implements Tsar.Core.IApp
 	private center: Tsar.Math.float3;
 	private light: Tsar.Math.float3;
 
+	crossTest()
+	{
+		console.log((new Tsar.Math.float3(1, 0, 0)).cross(new Tsar.Math.float3(0, 0, 1)));
+		console.log((new Tsar.Math.float3(1, 0, 0.5)).normalize().cross((new Tsar.Math.float3(0.3, 0, 1.5)).normalize()));
+	}
+
 	ready()
 	{
+		this.crossTest();
+
 		var eds = this;
 
 		var W = this.W = Tsar.UI.window.width();
@@ -44,8 +52,8 @@ class EDS implements Tsar.Core.IApp
 
 			eds.light = eds.center.sub(v).normalize();
 
-			console.log(e.x . e.y);
-			console.log(eds.light);
+		//	console.log(e.x + " " + e.y);
+		//	console.log(eds.light);
 		};
 
 		rtproxy.mouse.onMove(mouseFn);
