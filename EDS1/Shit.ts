@@ -24,7 +24,9 @@ class Shit implements Tsar.Core.IApp
 	private W: number;
 	private H: number;
 
-	private plotter = new Tsar.Render.Debug.Plotter(100);
+	private plotX = new Tsar.Render.Debug.Plot(50, -1, 1, {color:'red', axesColor:'white'});
+	private plotY = new Tsar.Render.Debug.Plot(50, -1, 1, {color:'green', axesColor:'white'});
+	private plotZ = new Tsar.Render.Debug.Plot(50, -1, 1, {color:'blue', axesColor:'white'});
 
 	proj()
 	{
@@ -43,6 +45,10 @@ class Shit implements Tsar.Core.IApp
 	{
 		this.proj();
 
+		this.plotX.setPosition(new Tsar.Math.float2(140, 220));
+		this.plotY.setPosition(new Tsar.Math.float2(20, 100));
+		this.plotZ.setPosition(new Tsar.Math.float2(20, 220));
+
 		var shit = this;
 
 		var W = this.W = Tsar.UI.window.width();
@@ -52,31 +58,6 @@ class Shit implements Tsar.Core.IApp
 		this.lines = new DashFieldShader(80, 20, 100, 40, 60);
 		this.RT = new Tsar.Render.Target(this.W, this.H);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
-
-		this.plotter.setPosition(new Tsar.Math.float2(100, 200));
-		this.plotter.setDimensions(new Tsar.Math.float2(400, 200));
-
-		this.plotter.addChart('x', {
-			color:'red',
-			thickness: 1
-		});
-
-		this.plotter.addChart('y', {
-			color:'green',
-			thickness: 1
-		});
-
-		this.plotter.addChart('z', {
-			color:'blue',
-			thickness: 1
-		});
-
-		/*
-		this.plotter.addChart('random', {
-			color:'rgb(64,255,127)',
-			thickness: 1
-		});
-		*/
 
 		var mouseFn = function(e){
 			shit.shader.setParallaxOffset(
@@ -90,6 +71,9 @@ class Shit implements Tsar.Core.IApp
 					Math.floor(e.x) - (shit.W/2),
 					Math.floor(e.y) - (shit.H/2)
 			));
+
+			shit.plotX.addValue((e.x / shit.W) * 2 - 1);
+			shit.plotY.addValue((e.y / shit.H) * 2 - 1);
 		};
 
 		var clickFn = function(e)
@@ -99,9 +83,9 @@ class Shit implements Tsar.Core.IApp
 
 		var motionFn = function(e)
 		{
-			shit.plotter.addValue('x', e.acceleration.x);
-			shit.plotter.addValue('y', e.acceleration.y);
-			shit.plotter.addValue('z', e.acceleration.z);
+		//	shit.plotter.addValue('x', e.acceleration.x);
+		//	shit.plotter.addValue('y', e.acceleration.y);
+		//	shit.plotter.addValue('z', e.acceleration.z);
 		}
 
 		rtproxy.mouse.onMove(mouseFn);
@@ -113,8 +97,6 @@ class Shit implements Tsar.Core.IApp
 	{
 		this.shader.update(dt, et);
 		this.lines.update(dt);
-
-	//	this.plotter.addValue('random', gMath.random() * 100);
 	}
 
 	render()
@@ -128,13 +110,14 @@ class Shit implements Tsar.Core.IApp
 		this.RT.context.fill();
 	//	this.RT.context.clearRect(0, 0, this.W, this.H);
 	
-		this.shader.prepare("S  H  I  T", new TMath.float2(this.W/2, this.H/2), 24);
+		this.shader.prepare("S H I T", new TMath.float2(this.W/2, this.H/2), 24);
 		this.shader.render(this.RT.context);
 
 	//	this.lines.render(this.RT.context);
 		
-		this.plotter.render(this.RT.context);
-
+		this.plotX.render(this.RT.context);
+		this.plotY.render(this.RT.context);
+		this.plotZ.render(this.RT.context);
 	}
 }
 
