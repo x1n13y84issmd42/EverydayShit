@@ -59,6 +59,9 @@ class Shit implements Tsar.Core.IApp
 		this.RT = new Tsar.Render.Target(this.W, this.H);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
 
+		var px = 0;
+		var py = 0;
+
 		var mouseFn = function(e){
 			shit.shader.setParallaxOffset(
 				new TMath.float2(
@@ -90,9 +93,21 @@ class Shit implements Tsar.Core.IApp
 
 		var motionFn = function(e)
 		{
-		//	shit.plotter.addValue('x', e.acceleration.x);
-		//	shit.plotter.addValue('y', e.acceleration.y);
-		//	shit.plotter.addValue('z', e.acceleration.z);
+			shit.plotX.addValue(e.acceleration.x);
+			shit.plotY.addValue(e.acceleration.y);
+			shit.plotZ.addValue(e.acceleration.z);
+
+			px += e.rotationRate.alpha * 9;
+			py += e.rotationRate.beta * 9;
+
+			if (px > 0) px = Math.min(px, 750);
+			else if (px < 0) px = Math.max(px, -750);
+
+			if (py > 0) py = Math.min(py, 450);
+			else if (py < 0) py = Math.max(py, -450);
+
+			shit.shader.setParallaxOffset(new Tsar.Math.float2(px, py));
+			shit.lines.setParallaxOffset(new Tsar.Math.float2(px, py));
 		}
 
 		rtproxy.mouse.onMove(mouseFn);
@@ -126,7 +141,7 @@ class Shit implements Tsar.Core.IApp
 		this.shader.prepare("S H I T", new TMath.float2(this.W/2, this.H/2), 24);
 		this.shader.render(this.RT.context);
 
-	//	this.lines.render(this.RT.context);
+		this.lines.render(this.RT.context);
 		
 		this.plotX.render(this.RT.context);
 		this.plotY.render(this.RT.context);
