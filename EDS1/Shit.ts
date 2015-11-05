@@ -78,7 +78,14 @@ class Shit implements Tsar.Core.IApp
 
 		var clickFn = function(e)
 		{
-			shit.shader.hit();
+			if (shit.RT.isFullscreen())
+			{
+				shit.RT.cancelFullscreen();
+			}
+			else
+			{
+				shit.RT.requestFullscreen();
+			}
 		}
 
 		var motionFn = function(e)
@@ -91,6 +98,12 @@ class Shit implements Tsar.Core.IApp
 		rtproxy.mouse.onMove(mouseFn);
 		rtproxy.mouse.onClick(clickFn);
 		rtproxy.motion.onMotion(motionFn);
+
+		Tsar.UI.window.onResize(evt => {
+			shit.W = Tsar.UI.window.width();
+			shit.H = Tsar.UI.window.height();
+			shit.RT.resize(shit.W, shit.H);
+		});
 	}
 
 	update(dt:number, et:number, now:number)
