@@ -68,7 +68,7 @@ class DashFieldShader extends Tsar.Render.Shader
 		var xO = this.W / 2 - (lX * sX / 2);
 		var zDepth = lZ * sZ;
 
-		var origin = new Tsar.Math.float3(xO - this.offset.x, 700 - this.offset.y, 300);
+		var origin = new Tsar.Math.float3(xO - this.offset.x, 700 - this.offset.y, 0);
 		var end = new Tsar.Math.float3(xO + this.offset.x, 600 + this.offset.y, lZ * (this.dashLength + sZ));
 		var v = end.sub(origin).normalize();
 		var p = new Tsar.Math.float3(origin.x, origin.y, origin.z);

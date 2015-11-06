@@ -63,17 +63,10 @@ class Shit implements Tsar.Core.IApp
 		var py = 0;
 
 		var mouseFn = function(e){
-			shit.shader.setParallaxOffset(
-				new TMath.float2(
-					Math.floor(e.x) - (shit.W/2),
-					Math.floor(e.y) - (shit.H/2)
-			));
+			var po = new TMath.float2(Math.floor(e.x) - (shit.W/2), Math.floor(e.y) - (shit.H/2));
 
-			shit.lines.setParallaxOffset(
-				new TMath.float2(
-					Math.floor(e.x) - (shit.W/2),
-					Math.floor(e.y) - (shit.H/2)
-			));
+			shit.shader.setParallaxOffset(po);
+			shit.lines.setParallaxOffset(po);
 
 			shit.plotX.addValue((e.x / shit.W) * 2 - 1);
 			shit.plotY.addValue((e.y / shit.H) * 2 - 1);
@@ -81,6 +74,7 @@ class Shit implements Tsar.Core.IApp
 
 		var clickFn = function(e)
 		{
+			/*
 			if (shit.RT.isFullscreen())
 			{
 				shit.RT.cancelFullscreen();
@@ -89,6 +83,7 @@ class Shit implements Tsar.Core.IApp
 			{
 				shit.RT.requestFullscreen();
 			}
+			*/
 		}
 
 		var motionFn = function(e)
