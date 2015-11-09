@@ -9,6 +9,9 @@
 /// <reference path='../shared/TSAR/src/Tsar/Render/Plotter.ts' />
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
+/// <reference path='../shared/TSAR/src/Tsar/UI/Layout.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/UI/Label.ts' />
+
 /// <reference path='PowerShitShader.ts' />
 /// <reference path='DashFieldShader.ts' />
 
@@ -28,6 +31,8 @@ class Shit implements Tsar.Core.IApp
 	private plotY = new Tsar.Render.Debug.Plot(50, -1, 1, {color:'green', axesColor:'white'});
 	private plotZ = new Tsar.Render.Debug.Plot(50, -1, 1, {color:'blue', axesColor:'white'});
 
+	private label = new Tsar.UI.Label();
+
 	proj()
 	{
 		var w = 1000, h = 750;
@@ -41,9 +46,16 @@ class Shit implements Tsar.Core.IApp
 		console.log(p12_3);
 	}
 
+	setupUI()
+	{
+		Tsar.UI.layout.place(this.label);
+		this.label.text = "Coding shit every day";
+	}
+
 	ready()
 	{
 		this.proj();
+		this.setupUI();
 
 		this.plotX.setPosition(new Tsar.Math.float2(140, 220));
 		this.plotY.setPosition(new Tsar.Math.float2(20, 100));

@@ -83,7 +83,7 @@ class PowerShitShader extends Tsar.Render.Shader
 		C.globalCompositeOperation = "lighten";
 
 		var depth = 400;
-		var tsize = 260;
+		var tsize = this.H / 3;
 		var size = tsize;
 		var xO = this.W / 2;
 		var yO = this.H / 2;
