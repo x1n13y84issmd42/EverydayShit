@@ -83,7 +83,8 @@ class PowerShitShader extends Tsar.Render.Shader
 		C.globalCompositeOperation = "lighten";
 
 		var depth = 400;
-		var tsize = this.H / 3;
+		var tsize = 750;
+		var units = '%';
 		var size = tsize;
 		var xO = this.W / 2;
 		var yO = this.H / 2;
@@ -96,8 +97,6 @@ class PowerShitShader extends Tsar.Render.Shader
 		var v = end.sub(origin).normalize().nmul(zStep);
 		var p = origin;
 
-		C.font = "bold " + size + "px Codystar";
-
 		for (var dI in this.layers)
 		{
 			var pt = Tsar.Math.perspectiveProjection(p, this.W, this.H, 0);
@@ -108,7 +107,7 @@ class PowerShitShader extends Tsar.Render.Shader
 			c.l = d.lightness;
 
 			C.fillStyle = c.rgba();
-			C.font = "bold " + (size * 2) + "px Codystar";
+			C.font = "bold " + size + units + " Codystar";
 			var tW = C.measureText(this.text).width / 2;
 			C.context.fillText(this.text, pt.x - (tW), pt.y + this.p * 100);
 
