@@ -16,12 +16,26 @@ canvas,
 	background: transparent;
 }
 
+@font-face {
+  font-family: 'Pixelmix';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/shared/fonts/pixelmix.ttf);
+}
+
+@font-face {
+  font-family: 'Enhanced Dot Digital-7';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/shared/fonts/enhanced_dot_digital-7.ttf);
+}
+
 #controls
 {
 	color: white;
 }
 
-.hud
+#hud
 {
 	position: absolute;
 	top: 0;
@@ -29,32 +43,13 @@ canvas,
 	padding: 12pt;
 }
 
-.hud .label
+#hud .label
 {
-	font-family: 'Josefin Sans', sans-serif;
-	font-size: 32pt;
+	font-family: 'Enhanced Dot Digital-7', sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 400;
 	color: white;
 	display: block;
 	margin: 0 4pt 8pt 0;
-	text-shadow:
-		1px 1px 1px rgba(0, 0, 0, 0.4),
-		2px 2px 1px rgba(0, 0, 0, 0.38),
-		3px 3px 1px rgba(0, 0, 0, 0.36),
-		4px 4px 1px rgba(0, 0, 0, 0.34),
-		5px 5px 1px rgba(0, 0, 0, 0.32),
-		6px 6px 1px rgba(0, 0, 0, 0.30),
-		7px 7px 1px rgba(0, 0, 0, 0.28),
-		8px 8px 1px rgba(0, 0, 0, 0.26),
-		9px 9px 1px rgba(0, 0, 0, 0.24),
-		10px 10px 1px rgba(0, 0, 0, 0.22),
-		11px 11px 1px rgba(0, 0, 0, 0.2),
-		12px 12px 1px rgba(0, 0, 0, 0.18),
-		13px 13px 1px rgba(0, 0, 0, 0.16),
-		14px 14px 1px rgba(0, 0, 0, 0.14),
-		15px 15px 1px rgba(0, 0, 0, 0.12),
-		16px 16px 1px rgba(0, 0, 0, 0.10),
-		17px 17px 1px rgba(0, 0, 0, 0.08),
-		18px 18px 1px rgba(0, 0, 0, 0.06),
-		19px 19px 1px rgba(0, 0, 0, 0.04),
-		20px 20px 1px rgba(0, 0, 0, 0.02);
 }

@@ -17,6 +17,17 @@ class PowerShitShader extends Tsar.Render.Shader
 
 	private layers = [];
 
+	private W: number;	//	Window dimensions
+	private H: number;
+
+	constructor()
+	{
+		super();
+
+	    this.W = Tsar.UI.window.width();
+		this.H = Tsar.UI.window.height();
+	}
+
 	prepare(text: string, pt: Tsar.Math.float2, depth?: number)
 	{
 		this.text = text;
@@ -71,30 +82,36 @@ class PowerShitShader extends Tsar.Render.Shader
 	{
 		C.globalCompositeOperation = "lighten";
 
-		var bsize = 96;
-		var msize = 160;
-		var sizeStep = (msize - bsize) / (this.depth / 2);
-		var size = bsize - (sizeStep * (this.depth / 2));
+		var depth = 400;
+		var tsize = 750;
+		var units = '%';
+		var size = tsize;
+		var xO = this.W / 2;
+		var yO = this.H / 2;
+		var zO = 300;
+		var offset = new Tsar.Math.float2(this.offset.x * (depth / 2000), this.offset.y * (depth / 2000));
 
-		var pdv = new Tsar.Math.float2(-this.offset.x / 3, -this.offset.y / 3);
-		var pdvs = pdv.ndiv(this.depth);
-		
-		C.font = "bold " + size + "px Codystar";
-		var pt = (new Tsar.Math.float2(this.pt.x, this.pt.y)).sub(pdvs.nmul(this.depth/2));
+		var origin = new Tsar.Math.float3(xO + offset.x, yO + offset.y, zO + depth);
+		var end = new Tsar.Math.float3(xO - offset.x, yO - offset.y, zO);
+		var zStep = depth / this.layers.length;
+		var v = end.sub(origin).normalize().nmul(zStep);
+		var p = origin;
 
 		for (var dI in this.layers)
 		{
+			var pt = Tsar.Math.perspectiveProjection(p, this.W, this.H, 0);
+			size = tsize / p.z * tsize;
+			
 			var c = new Tsar.Math.Color(64, 128, 255, (1 - dI/this.depth));
 			var d = this.layers[dI];
 			c.l = d.lightness;
 
 			C.fillStyle = c.rgba();
-			C.font = "bold " + (size * 2) + "px Codystar";
+			C.font = "bold " + size + units + " Codystar";
 			var tW = C.measureText(this.text).width / 2;
 			C.context.fillText(this.text, pt.x - (tW), pt.y + this.p * 100);
 
-			pt = pt.add(pdvs);
-			size += sizeStep;
+			p = p.add(v);
 		}
 	}
 }
