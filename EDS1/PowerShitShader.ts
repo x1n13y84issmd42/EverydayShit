@@ -6,11 +6,12 @@ class PowerShitShader extends Tsar.Render.Shader
 {
 	private text : string;
 	private depth : number;
+	private numLayers : number;
 	private pt : Tsar.Math.float2;
 	private offset : Tsar.Math.float2 = new Tsar.Math.float2(0, 0);
 
 	private dtPush = 100;
-	private dt = 0;
+	private et = 0;
 	private hue = 1;
 	private lightness = 0.5;
 	private p = 0;
@@ -28,10 +29,11 @@ class PowerShitShader extends Tsar.Render.Shader
 		this.H = Tsar.UI.window.height();
 	}
 
-	prepare(text: string, pt: Tsar.Math.float2, depth?: number)
+	prepare(text: string, pt: Tsar.Math.float2, depth: number, numLayers: number)
 	{
 		this.text = text;
 		this.depth = depth;
+		this.numLayers = numLayers;
 		this.pt = pt;
 	}
 
@@ -42,45 +44,14 @@ class PowerShitShader extends Tsar.Render.Shader
 
 	update(dt:number, et:number)
 	{
-		this.dt += dt;
-		this.lightness = gMath.min((gMath.sin(et / 200)) * 0.5 + 0.75, 0.9);
-//		this.lightness = gMath.max()
-	//	this.p = gMath.sin(et / 100);
-
-		if (this.dt >= this.dtPush)
-		{
-			this.dt = 0;
-			this.hue -= (1 / this.depth);
-		//	console.log(this.hue);
-			this.addLayer({
-				hit:false,
-				hue:this.hue,
-				lightness:this.lightness
-			});
-		}
-	}
-
-	private addLayer(d)
-	{
-		this.layers.unshift(d);
-		if (this.layers.length > this.depth)
-		{
-			this.layers.splice(this.depth);
-		}
-	}
-
-	hit()
-	{
-		this.addLayer({
-			hit:true,
-			hue:this.hue,
-			lightness: this.lightness
-		});
+		this.et = et;
 	}
 
 	render(C)
 	{
 		C.globalCompositeOperation = "lighten";
+
+		var fontFace = "Codystar";
 
 		var depth = 400;
 		var tsize = 750;
@@ -93,21 +64,21 @@ class PowerShitShader extends Tsar.Render.Shader
 
 		var origin = new Tsar.Math.float3(xO + offset.x, yO + offset.y, zO + depth);
 		var end = new Tsar.Math.float3(xO - offset.x, yO - offset.y, zO);
-		var zStep = depth / this.layers.length;
+		var zStep = this.depth / this.numLayers;
 		var v = end.sub(origin).normalize().nmul(zStep);
 		var p = origin;
 
-		for (var dI in this.layers)
+		for (var dI = 0; dI < this.numLayers; dI++)
 		{
 			var pt = Tsar.Math.perspectiveProjection(p, this.W, this.H, 0);
 			size = tsize / p.z * tsize;
 			
-			var c = new Tsar.Math.Color(64, 128, 255, (1 - dI/this.depth));
-			var d = this.layers[dI];
-			c.l = d.lightness;
+			var c = new Tsar.Math.Color(64, 128, 255, (1 - dI/this.numLayers));
+			var lightness = gMath.min((gMath.sin(this.et / 100 - dI/2)) * 0.5 + 0.75, 0.9);
+			c.l = lightness;
 
 			C.fillStyle = c.rgba();
-			C.font = "bold " + size + units + " Codystar";
+			C.font = "bold " + size + units + " " + fontFace;
 			var tW = C.measureText(this.text).width / 2;
 			C.context.fillText(this.text, pt.x - (tW), pt.y + this.p * 100);
 

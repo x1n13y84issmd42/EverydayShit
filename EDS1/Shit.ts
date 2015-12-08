@@ -145,7 +145,7 @@ class Shit implements Tsar.Core.IApp
 		this.RT.context.fill();
 	//	this.RT.context.clearRect(0, 0, this.W, this.H);
 	
-		this.shader.prepare("S H I T", new TMath.float2(this.W/2, this.H/2), 24);
+		this.shader.prepare("S H I T", new TMath.float2(this.W/2, this.H/2), 400, 24);
 		this.shader.render(this.RT.context);
 
 		this.lines.render(this.RT.context);
