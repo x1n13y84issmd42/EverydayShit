@@ -27,7 +27,7 @@ canvas,
   font-family: 'Enhanced Dot Digital-7';
   font-style: normal;
   font-weight: 400;
-  src: url(/shared/fonts/enhanced_dot_digital-7.ttf);
+  src: url(../fonts/enhanced_dot_digital-7.ttf);
 }
 
 #controls
