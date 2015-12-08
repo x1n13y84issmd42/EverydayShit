@@ -74,7 +74,7 @@ class PowerShitShader extends Tsar.Render.Shader
 			size = tsize / p.z * tsize;
 			
 			var c = new Tsar.Math.Color(64, 128, 255, (1 - dI/this.numLayers));
-			var lightness = gMath.min((gMath.sin(this.et / 100 - dI/2)) * 0.5 + 0.75, 0.9);
+			var lightness = gMath.min((gMath.sin(this.et / 200 - dI/2)) * 0.5 + 0.75, 0.9);
 			c.l = lightness;
 
 			C.fillStyle = c.rgba();
