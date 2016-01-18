@@ -9,8 +9,7 @@ html, body{
 	overflow: hidden;
 }
 
-canvas,
-{
+canvas {
 	position: relative;
 	display: block;
 	background: transparent;
