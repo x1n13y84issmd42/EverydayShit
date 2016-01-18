@@ -9,8 +9,10 @@ class StarShader extends Tsar.Render.Shader
 	
 	private et: number = 0;
 	private center: Tsar.Math.float2;
-	private a:numbe = 0;
+	private a:number = 0;
 	private velocity = 0.019;
+	private pattern: number[];
+	private colors: string[];
 
 	constructor()
 	{
