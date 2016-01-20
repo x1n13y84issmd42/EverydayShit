@@ -9,18 +9,23 @@
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
 /// <reference path='BlockyShitShader.ts' />
+/// <reference path='StarfieldShader.ts' />
 /// 
 
 import DD = Tsar.Render.Debug;
 import TMath = Tsar.Math;
+var jMath = Math;
 
 class Shit implements Tsar.Core.IApp
 {
 	private RT: Tsar.Render.Target;
-	private shader: BlockyShitShader;
+	private blocky: BlockyShitShader;
+	private starField: StarFieldShader;
 
 	private W: number;
 	private H: number;
+
+	private et = 0;
 
 	ready()
 	{
@@ -29,13 +34,16 @@ class Shit implements Tsar.Core.IApp
 		var W = this.W = Tsar.UI.window.width();
 		var H = this.H = Tsar.UI.window.height();
 
-		this.shader = new BlockyShitShader();
+		this.blocky = new BlockyShitShader();
+		this.starField = new StarFieldShader();
 		this.RT = new Tsar.Render.Target(this.W, this.H);
+		this.starField.setC(this.RT.context);
+		this.starField.shine(500);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
 
 		var mouseFn = function(e){
 			/*
-			shit.shader.setParallaxOffset(
+			shit.blocky.setParallaxOffset(
 				new TMath.float2(
 					Math.floor(e.x) - (shit.W/2),
 					Math.floor(e.y) - (shit.H/2)
@@ -54,7 +62,9 @@ class Shit implements Tsar.Core.IApp
 
 	update(dt:number, et:number, now:number)
 	{
-		this.shader.update(dt);
+		this.blocky.update(dt);
+		this.starField.update(dt);
+		this.et = et;
 	}
 
 	render()
@@ -64,10 +74,35 @@ class Shit implements Tsar.Core.IApp
 		this.RT.context.beginPath();
 		this.RT.context.rect(0, 0, this.W, this.H);
 		this.RT.context.closePath();
-		this.RT.context.fillStyle = "rgba(255, 255, 255, 0.1)";
+		this.RT.context.fillStyle = "rgba(0, 0, 0, 1)";
 		this.RT.context.fill();
+
+		var gridColor = new Tsar.Math.Color(45, 162, 255, 1);
+		gridColor.a = 0.5 + 0.5 * jMath.sin(this.et / 7);
+
+		/*
+		DD.grid(this.RT.context, [
+			{
+				style: DD.GridStyle.Dashed,
+				axiality: DD.GridStyle.X,
+				width: 1,
+				stroke: gridColor.rgba(),
+				offset: 200,
+				numbers: true
+			},
+			{
+				style: DD.GridStyle.Dashed,
+				axiality: DD.GridStyle.Y,
+				width: 1,
+				stroke: gridColor.rgba(),
+				offset: 200,
+				numbers: true
+			}
+		]);
+		*/
 	
-		this.shader.render(this.RT.context);
+		this.starField.render(this.RT.context);
+		this.blocky.render(this.RT.context);
 	}
 }
 
