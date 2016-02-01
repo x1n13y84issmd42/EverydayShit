@@ -38,7 +38,7 @@ class HalftoneShader extends Tsar.Render.Shader
 		var data = this.src.getImageData(0, 0, this.src.canvas.width, this.src.canvas.height);
 		var pixels = data.data
 		var ratio = jMath.floor(this.W / this.src.canvas.width);
-		var maxRadius = 25;
+		var maxRadius = 15;
 
 		C.mozImageSmoothingEnabled = false;
 		C.webkitImageSmoothingEnabled = false;

@@ -8,9 +8,11 @@
 /// <reference path='../shared/TSAR/src/Tsar/Render/Debug.ts' />
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
-/// <reference path='HalftoneShader.ts' />
+/// <reference path='HalftonePreShader.ts' />
 /// <reference path='StarShader.ts' />
-/// 
+
+/// <reference path='../shared/TSAR/src/Tsar/UI/Layout.ts' />
+/// <reference path='../shared/TSAR/src/Tsar/UI/Label.ts' />
 
 import DD = Tsar.Render.Debug;
 import TMath = Tsar.Math;
@@ -31,7 +33,9 @@ class Shit implements Tsar.Core.IApp
 	private H: number;
 
 	private animage: any;
-	private mouse: Tsar.Math.float2;
+	private mouse = new Tsar.Math.float2(0, 0);
+
+	private label = new Tsar.UI.Label();
 
 	ready()
 	{
@@ -80,6 +84,8 @@ class Shit implements Tsar.Core.IApp
 		this.RT.context.closePath();
 		this.RT.context.fillStyle = "white";
 		this.RT.context.fill();
+
+		Tsar.UI.layout.place(this.label);
 	}
 
 	update(dt:number, et:number, now:number)
@@ -96,6 +102,7 @@ class Shit implements Tsar.Core.IApp
 	render()
 	{
 	//	this.prerenderImage();
+		var t1 = Date.now();
 
 		var txtRT = this.RTSmall;
 
@@ -173,6 +180,9 @@ class Shit implements Tsar.Core.IApp
 		
 
 	//	this.shader.render(this.RT.context);
+
+		var t = Date.now() - t1;
+		this.label.text = t + " ms";
 	}
 }
 
