@@ -4,7 +4,7 @@
 
 var jMath = Math;
 
-class HalftoneShader extends Tsar.Render.Shader
+class HalftoneTriShader extends Tsar.Render.Shader
 {
 	private W: number;	//	Window dimensions
 	private H: number;
@@ -12,6 +12,8 @@ class HalftoneShader extends Tsar.Render.Shader
 	private et: number = 0;
 
 	private src: any;
+	private radius:number = 200;
+	private center:Tsar.Math.float2;
 
 	constructor()
 	{
@@ -31,6 +33,21 @@ class HalftoneShader extends Tsar.Render.Shader
 	setSource(src)
 	{
 		this.src = src;
+	}
+
+	setCenter(c:Tsar.Math.float2)
+	{
+		this.center = c;
+	}
+
+	setRadius(r:number)
+	{
+		this.radius = r;
+	}
+
+	renderDot(color)
+	{
+
 	}
 
 	render(C)
@@ -55,6 +72,18 @@ class HalftoneShader extends Tsar.Render.Shader
 				var pX = xI * ratio;
 				var pY = yI * ratio;
 				var r = (1 - l) * maxRadius;
+
+				var p = new Tsar.Math.float2(pX, pY);
+				var pcD = this.center.dist(p);
+
+				if (pcD <= this.radius)
+				{
+					var d = 1 - (1 - ((this.radius - pcD) / this.radius));
+					var v = p.sub(this.center).normalize().nmul(d * 50);
+					pX += v.x;
+					pY += v.y;
+					r *= (1 - d);
+				}
 
 				C.moveTo(pX - r / 2, pY);
 				C.arc(pX, pY, r, 0, jMath.PI*2);

@@ -8,7 +8,7 @@
 /// <reference path='../shared/TSAR/src/Tsar/Render/Debug.ts' />
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
-/// <reference path='HalftonePreShader.ts' />
+/// <reference path='HalftoneTriShader.ts' />
 /// <reference path='StarShader.ts' />
 
 /// <reference path='../shared/TSAR/src/Tsar/UI/Layout.ts' />
@@ -17,12 +17,13 @@
 import DD = Tsar.Render.Debug;
 import TMath = Tsar.Math;
 var jMath = Math;
+import m = Tsar.Math;
 
 class Shit implements Tsar.Core.IApp
 {
 	private RT: Tsar.Render.Target;
 	private RTSmall: Tsar.Render.Target;
-	private shader: HalftoneShader;
+	private shader;
 	private shaderStar: StarShader;
 	private shaderStar2: StarShader;
 	private halftoneWidth = 100;
@@ -51,7 +52,7 @@ class Shit implements Tsar.Core.IApp
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
 	//	Tsar.UI.exposeRenderTarget(this.RTSmall);
 
-		this.shader = new HalftoneShader();
+		this.shader = new HalftoneTriShader();
 		this.shaderStar = new StarShader();
 		this.shaderStar2 = new StarShader();
 
@@ -66,6 +67,8 @@ class Shit implements Tsar.Core.IApp
 			shit.mouse = new Tsar.Math.float2(e.x, e.y);
 			shit.shaderStar.setCenter(shit.mouse);
 			shit.shaderStar2.setCenter(shit.mouse);
+
+			shit.shader.setCenter(shit.mouse);
 			/*
 			shit.shader.setParallaxOffset(
 				new TMath.float2(
@@ -151,16 +154,16 @@ class Shit implements Tsar.Core.IApp
 	//	C.shadowBlur = 30;
 	//	C.context.fillText(text, pt.x - (tW), pt.y);
 
-		C.beginPath();
-		C.arc(mSmall.x, mSmall.y, 4, 0, jMath.PI*2);
-		C.closePath();
-		C.fill();
-		C.fill();
-		C.fill();
-		C.fill();
-		C.fill();
-		C.fill();
-		C.fill();
+	//	C.beginPath();
+	//	C.arc(mSmall.x, mSmall.y, 4, 0, jMath.PI*2);
+	//	C.closePath();
+	//	C.fill();
+	//	C.fill();
+	//	C.fill();
+	//	C.fill();
+	//	C.fill();
+	//	C.fill();
+	//	C.fill();
 
 	//	this.RT.context.drawImage(this.RTSmall.getDOMNode(), 0, 0, this.halftoneWidth, this.halftoneHeight, 0, 0, this.halftoneWidth * 4, this.halftoneHeight * 4);
 
