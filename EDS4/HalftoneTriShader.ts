@@ -23,6 +23,8 @@ class HalftoneTriShader extends Tsar.Render.Shader
 		//	Depends on shader logic, obviously.
 		this.W = Tsar.UI.window.width();
 		this.H = Tsar.UI.window.height();
+
+		this.center = new Tsar.Math.float2(this.W/2, this.H/2);
 	}
 
 	update(dt: number)
