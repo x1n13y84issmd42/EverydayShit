@@ -12,8 +12,9 @@ class HalftoneTriShader extends Tsar.Render.Shader
 	private et: number = 0;
 
 	private src: any;
-	private radius:number = 200;
+	private radius:number = 150;
 	private center:Tsar.Math.float2;
+	private tridots = [];
 
 	constructor()
 	{
@@ -47,13 +48,42 @@ class HalftoneTriShader extends Tsar.Render.Shader
 		this.radius = r;
 	}
 
-	renderDot(color)
+	renderDots(C, color, offset)
 	{
+		C.fillStyle = color;
+		C.beginPath();
 
+		for (var tdI = 0; tdI < this.tridots.length; tdI++)
+		{
+			var td = this.tridots[tdI];
+
+			var d = 1 - (1 - ((this.radius - td.d) / this.radius));
+			var v = td.p.sub(this.center).normalize().nmul(d * offset);
+			var px = td.p.x + v.x;
+			var py = td.p.y + v.y;
+			var r = td.r * (1 - d);
+
+			C.moveTo(px - r / 2, py);
+			C.arc(px, py, r, 0, jMath.PI*2);
+		}
+
+		C.closePath();
+		C.fill();
+	}
+
+	addTriDot(p, r, d)
+	{
+		this.tridots.push({
+			p: p,
+			r: r,
+			d: d
+		});
 	}
 
 	render(C)
 	{
+		this.tridots = [];
+
 		var data = this.src.getImageData(0, 0, this.src.canvas.width, this.src.canvas.height);
 		var pixels = data.data
 		var ratio = jMath.floor(this.W / this.src.canvas.width);
@@ -80,15 +110,13 @@ class HalftoneTriShader extends Tsar.Render.Shader
 
 				if (pcD <= this.radius)
 				{
-					var d = 1 - (1 - ((this.radius - pcD) / this.radius));
-					var v = p.sub(this.center).normalize().nmul(d * 50);
-					pX += v.x;
-					pY += v.y;
-					r *= (1 - d);
+					this.addTriDot(p, r, pcD);
 				}
-
-				C.moveTo(pX - r / 2, pY);
-				C.arc(pX, pY, r, 0, jMath.PI*2);
+				else
+				{
+					C.moveTo(pX - r / 2, pY);
+					C.arc(pX, pY, r, 0, jMath.PI*2);
+				}
 
 				pI += 4;
 			}
@@ -96,5 +124,14 @@ class HalftoneTriShader extends Tsar.Render.Shader
 
 		C.closePath();
 		C.fill();
+
+		var gco = C.globalCompositeOperation;
+		C.globalCompositeOperation = 'multiply';
+
+		this.renderDots(C, 'red', 10)
+		this.renderDots(C, 'blue', 14)
+	//	this.renderDots(C, 'blue', 18)
+
+		C.globalCompositeOperation = gco;;
 	}
 }
