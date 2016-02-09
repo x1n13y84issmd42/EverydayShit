@@ -26,7 +26,7 @@ class Shit implements Tsar.Core.IApp
 	private shader;
 	private shaderStar: StarShader;
 	private shaderStar2: StarShader;
-	private halftoneWidth = 100;
+	private halftoneWidth = 75;
 	private halftoneHeight = 100;
 	private halftoneRatio = 0;
 
@@ -37,6 +37,9 @@ class Shit implements Tsar.Core.IApp
 	private mouse = new Tsar.Math.float2(0, 0);
 
 	private label = new Tsar.UI.Label();
+
+	public r1 = 100;
+	public p1 = 0.1;
 
 	ready()
 	{
@@ -50,7 +53,7 @@ class Shit implements Tsar.Core.IApp
 		this.RT = new Tsar.Render.Target(this.W, this.H);
 		this.RTSmall = new Tsar.Render.Target(this.halftoneWidth, this.halftoneHeight);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
-	//	Tsar.UI.exposeRenderTarget(this.RTSmall);
+		Tsar.UI.exposeRenderTarget(this.RTSmall);
 
 		this.shader = new HalftoneTriShader();
 		this.shaderStar = new StarShader();
@@ -78,7 +81,25 @@ class Shit implements Tsar.Core.IApp
 			*/
 		};
 
+		var wheelFn = function(e){
+			console.log(e);
+			var d = (e.wheelDeltaY > 0) ? 1 : -1;
+
+			if (e.altKey)
+			{
+				shit.p1 += 0.2 * d;
+				shit.p1 = jMath.min(1, jMath.max(0, shit.p1));
+				shit.shader.setPressure(shit.p1);
+			}
+			else
+			{
+				shit.r1 += 20 * d;
+				shit.shader.setRadius(shit.r1);
+			}
+		};
+
 		rtproxy.mouse.onMove(mouseFn);
+		rtproxy.mouse.onWheel(wheelFn);
 
 		this.animage = document.getElementById('animage');
 
@@ -93,6 +114,7 @@ class Shit implements Tsar.Core.IApp
 
 	update(dt:number, et:number, now:number)
 	{
+		this.shader.update(dt);
 		this.shaderStar.update(dt);
 		this.shaderStar2.update(dt);
 	}
@@ -113,16 +135,17 @@ class Shit implements Tsar.Core.IApp
 		txtRT.context.rect(0, 0, this.W, this.H);
 		txtRT.context.closePath();
 		txtRT.context.fillStyle = "white";
+	//	txtRT.context.fillStyle = "#F7F7F7";
 		txtRT.context.fill();
 
 		txtRT.context.globalCompositeOperation = "source-over";
 
 		var mSmall = Tsar.Math.scale2D(this.mouse.x, this.mouse.y, 0, 0, this.RT.width(), this.RT.height(), 0, 0, this.RTSmall.width(), this.RTSmall.height());
 		this.shaderStar.setCenter(mSmall);
-		this.shaderStar.render(this.RTSmall.context);
+	//	this.shaderStar.render(this.RTSmall.context);
 		txtRT.context.globalCompositeOperation = "overlay";
 		this.shaderStar2.setCenter(mSmall);
-		this.shaderStar2.render(this.RTSmall.context);
+	//	this.shaderStar2.render(this.RTSmall.context);
 		
 		txtRT.context.globalCompositeOperation = "source-over";
 		

@@ -4,7 +4,7 @@
 
 var jMath = Math;
 
-class HalftoneTriShader extends Tsar.Render.Shader
+class HalftoneTriSqShader extends Tsar.Render.Shader
 {
 	private W: number;	//	Window dimensions
 	private H: number;
@@ -13,7 +13,6 @@ class HalftoneTriShader extends Tsar.Render.Shader
 
 	private src: any;
 	private radius:number = 150;
-	private savedRadius:number = 150;
 	private pressure:number = 1;
 	private center:Tsar.Math.float2;
 	private tridots = [];
@@ -33,7 +32,6 @@ class HalftoneTriShader extends Tsar.Render.Shader
 	update(dt: number)
 	{
 		this.et += dt;
-		this.radius = this.savedRadius + jMath.sin(this.et / 50) * this .radius * 0.05;
 	}
 
 	setSource(src)
@@ -48,7 +46,7 @@ class HalftoneTriShader extends Tsar.Render.Shader
 
 	setRadius(r:number)
 	{
-		this.savedRadius = this.radius = jMath.max(0.1, r);
+		this.radius = jMath.max(0.1, r);
 	}
 
 	setPressure(p:number)
@@ -59,7 +57,6 @@ class HalftoneTriShader extends Tsar.Render.Shader
 	renderDots(C, color, offset)
 	{
 		C.fillStyle = color;
-	//	C.shadowColor = color;
 		C.beginPath();
 
 		for (var tdI = 0; tdI < this.tridots.length; tdI++)
@@ -73,8 +70,10 @@ class HalftoneTriShader extends Tsar.Render.Shader
 			var r = td.r * (1 - d * this.pressure);
 		//	r = td.r * (jMath.sin(this.et / 250 + d * 4) * 0.5 + 0.5);
 
-			C.moveTo(px - r / 2, py);
-			C.arc(px, py, r, 0, jMath.PI*2);
+			C.moveTo(px - r, py - r);
+			C.lineTo(px + r, py - r);
+			C.lineTo(px + r, py + r);
+			C.lineTo(px - r, py + r);
 		}
 
 		C.closePath();
@@ -97,7 +96,7 @@ class HalftoneTriShader extends Tsar.Render.Shader
 		var data = this.src.getImageData(0, 0, this.src.canvas.width, this.src.canvas.height);
 		var pixels = data.data
 		var ratio = jMath.floor(this.W / this.src.canvas.width);
-		var maxRadius = 25;
+		var maxRadius = 10;
 
 		C.fillStyle = "black";
 		C.beginPath();
@@ -124,8 +123,10 @@ class HalftoneTriShader extends Tsar.Render.Shader
 				}
 				else
 				{
-					C.moveTo(pX - r / 2, pY);
-					C.arc(pX, pY, r, 0, jMath.PI*2);
+					C.moveTo(pX - r, pY - r);
+					C.lineTo(pX + r, pY - r);
+					C.lineTo(pX + r, pY + r);
+					C.lineTo(pX - r, pY + r);
 				}
 
 				pI += 4;
@@ -139,9 +140,8 @@ class HalftoneTriShader extends Tsar.Render.Shader
 		C.globalCompositeOperation = 'multiply';
 
 		this.renderDots(C, '#F1C40F', 10);
-		this.renderDots(C, '#E74C3C', 14);
 		this.renderDots(C, '#3498DB', 18);
-		this.renderDots(C, '#11b9d7', 22);
+		this.renderDots(C, '#E74C3C', 14);
 
 		C.globalCompositeOperation = gco;;
 	}
