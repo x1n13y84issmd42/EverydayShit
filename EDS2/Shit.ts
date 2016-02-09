@@ -9,7 +9,7 @@
 /// <reference path='../shared/TSAR/src/Tsar/Math/float3.ts' />
 
 /// <reference path='BlockyShitShader.ts' />
-/// <reference path='StarfieldShader.ts' />
+/// <reference path='StarFieldShader.ts' />
 /// 
 
 import DD = Tsar.Render.Debug;
