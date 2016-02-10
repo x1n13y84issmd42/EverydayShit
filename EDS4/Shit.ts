@@ -26,7 +26,7 @@ class Shit implements Tsar.Core.IApp
 	private shader;
 	private shaderStar: StarShader;
 	private shaderStar2: StarShader;
-	private halftoneWidth = 75;
+	private halftoneWidth = 50;
 	private halftoneHeight = 100;
 	private halftoneRatio = 0;
 
@@ -53,7 +53,7 @@ class Shit implements Tsar.Core.IApp
 		this.RT = new Tsar.Render.Target(this.W, this.H);
 		this.RTSmall = new Tsar.Render.Target(this.halftoneWidth, this.halftoneHeight);
 		var rtproxy = Tsar.UI.exposeRenderTarget(this.RT);
-		Tsar.UI.exposeRenderTarget(this.RTSmall);
+	//	Tsar.UI.exposeRenderTarget(this.RTSmall);
 
 		this.shader = new HalftoneTriShader();
 		this.shaderStar = new StarShader();
@@ -98,8 +98,21 @@ class Shit implements Tsar.Core.IApp
 			}
 		};
 
+		var touchFn = function(e)
+		{
+			if (e.touches.length)
+			{
+				var touch = e.touches[0];
+				touch = new Tsar.Math.float2(touch.pageX, touch.pageY);
+				shit.shader.setCenter(touch);
+			}
+
+			e.preventDefault();
+		}
+
 		rtproxy.mouse.onMove(mouseFn);
 		rtproxy.mouse.onWheel(wheelFn);
+		rtproxy.touch.touchMoveCB = touchFn;
 
 		this.animage = document.getElementById('animage');
 

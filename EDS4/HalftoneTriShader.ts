@@ -12,7 +12,7 @@ class HalftoneTriShader extends Tsar.Render.Shader
 	private et: number = 0;
 
 	private src: any;
-	private radius:number = 150;
+	private radius:number = 200;
 	private savedRadius:number = 150;
 	private pressure:number = 1;
 	private center:Tsar.Math.float2;
@@ -97,7 +97,7 @@ class HalftoneTriShader extends Tsar.Render.Shader
 		var data = this.src.getImageData(0, 0, this.src.canvas.width, this.src.canvas.height);
 		var pixels = data.data
 		var ratio = jMath.floor(this.W / this.src.canvas.width);
-		var maxRadius = 25;
+		var maxRadius = 24;
 
 		C.fillStyle = "black";
 		C.beginPath();
@@ -138,10 +138,10 @@ class HalftoneTriShader extends Tsar.Render.Shader
 		var gco = C.globalCompositeOperation;
 		C.globalCompositeOperation = 'multiply';
 
-		this.renderDots(C, '#F1C40F', 10);
-		this.renderDots(C, '#E74C3C', 14);
-		this.renderDots(C, '#3498DB', 18);
-		this.renderDots(C, '#11b9d7', 22);
+		this.renderDots(C, '#dea30a', 10);
+		this.renderDots(C, '#c62b1b', 14);
+		this.renderDots(C, '#1377ba', 18);
+		this.renderDots(C, '#9199b6', 22);
 
 		C.globalCompositeOperation = gco;;
 	}
