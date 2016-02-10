@@ -112,7 +112,7 @@ class Shit implements Tsar.Core.IApp
 
 		rtproxy.mouse.onMove(mouseFn);
 		rtproxy.mouse.onWheel(wheelFn);
-		rtproxy.touch.touchMoveCB = touchFn;
+		rtproxy.touch.onTouchMove(touchFn);
 
 		this.animage = document.getElementById('animage');
 
